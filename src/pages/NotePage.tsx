@@ -1,7 +1,6 @@
 import { DrawingBoard } from "@/components/editor/DrawingBoard";
 import { QuillEditor } from "@/components/editor/QuillEditor";
-import Header from "@/components/layout/Header";
-import Sidebar from "@/components/layout/Sidebar";
+import RootLayout from "@/components/layout/RootLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -10,17 +9,27 @@ import { useSidebarStore } from "@/store/sidebarState";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { Menu } from "lucide-react";
 
 export default function NotePage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { notes, addNote, updateNote } = UseNotes();
-    const { isOpen } = useSidebarStore();
+    const { toggle } = useSidebarStore();
+    const [isMobile, setIsMobile] = useState(false);
+    const [isDrawingOpen, setIsDrawingOpen] = useState(false);
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [drawings, setDrawings] = useState<any>([]);
     const [isPreviewMode, setIsPreviewMode] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     useEffect(() => {
         if (id) {
@@ -46,57 +55,103 @@ export default function NotePage() {
     };
 
     return (
-        <div className="h-screen flex flex-col">
-            <Header />
-            <div className="flex-1 flex">
-                <Sidebar />
-                <main className={cn(
-                    "flex-1 p-6 bg-gray-50 transition-all duration-300",
-                    isOpen ? "" : "ml-[50px]"
-                )}>
-                    <div className="mb-4 flex items-center justify-between">
-                        <Input
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Note title"
-                            className="text-2xl font-semibold w-[300px]"
-                        />
-                        <div className="flex text-white items-center gap-2">
-                            <Button onClick={handleSave}>Save</Button>
+        <RootLayout>
+            <div className="h-full overflow-auto bg-zinc-50">
+                <div className="max-w-[1600px] w-full mx-auto p-4 md:p-6">
+                    <div className="mb-6 flex flex-col md:flex-row md:items-center gap-4">
+                        <div className="flex items-center gap-2 flex-1">
+                            {isMobile && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={toggle}
+                                    className="md:hidden"
+                                >
+                                    <Menu className="h-5 w-5" />
+                                </Button>
+                            )}
+                            <Input
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                placeholder="Note title"
+                                className="text-lg md:text-xl"
+                            />
+                        </div>
+                        <div className="flex items-center gap-2">
                             <Button
-                                variant={isPreviewMode ? 'default' : 'ghost'}
-                                onClick={() => setIsPreviewMode(!isPreviewMode)}
+                                onClick={handleSave}
+                                className="flex-1 md:flex-none"
                             >
-                                Preview
+                                Save
+                            </Button>
+                            <Button
+                                variant={isPreviewMode ? 'default' : 'outline'}
+                                onClick={() => setIsPreviewMode(!isPreviewMode)}
+                                className="flex-1 md:flex-none"
+                            >
+                                {isPreviewMode ? 'Edit' : 'Preview'}
                             </Button>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        {isPreviewMode ? (
-                            <div className="prose max-w-none">
-                                <h1>{title}</h1>
-                                <div dangerouslySetInnerHTML={{ __html: content }} />
-                            </div>
-                        ) : (
-                            <QuillEditor value={content} onChange={setContent} />
-                        )}
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="outline" className="w-full">
-                                    Open Drawing Board
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="right" className="w-3/4">
-                                <SheetHeader>
-                                    <SheetTitle>Drawing Board</SheetTitle>
-                                </SheetHeader>
-                                <DrawingBoard onSave={setDrawings} />
-                            </SheetContent>
-                        </Sheet>
+                    <div className={cn(
+                        "grid gap-6",
+                        isDrawingOpen ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1"
+                    )}>
+                        <div className={cn(
+                            "min-h-[calc(100vh-16rem)]",
+                            !isDrawingOpen && !isMobile && "lg:w-[70%]"
+                        )}>
+                            {(!isPreviewMode || !isMobile) && (
+                                <QuillEditor
+                                    value={content}
+                                    onChange={setContent}
+                                    className="h-full"
+                                />
+                            )}
+                            {isPreviewMode && (
+                                <div className="prose prose-sm md:prose-base max-w-none bg-white rounded-lg border p-4 min-h-[calc(100vh-16rem)] overflow-auto">
+                                    <h1>{title}</h1>
+                                    <div dangerouslySetInnerHTML={{ __html: content }} />
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="space-y-4">
+                            <Sheet open={isDrawingOpen} onOpenChange={setIsDrawingOpen}>
+                                <SheetTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            "transition-all duration-300",
+                                            !isDrawingOpen && !isMobile && "w-40"
+                                        )}
+                                    >
+                                        Open Drawing Board
+                                    </Button>
+                                </SheetTrigger>
+                                <SheetContent
+                                    side={isMobile ? "bottom" : "right"}
+                                    className={cn(
+                                        "bg-white",
+                                        isMobile ? "h-[80vh] p-4" : "w-[90%] max-w-[800px]"
+                                    )}
+                                >
+                                    <SheetHeader>
+                                        <SheetTitle>Drawing Board</SheetTitle>
+                                    </SheetHeader>
+                                    <div className="mt-4 h-[calc(100%-60px)]">
+                                        <DrawingBoard
+                                            onSave={setDrawings}
+                                            className="h-full"
+                                        />
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
                     </div>
-                </main>
+                </div>
             </div>
-        </div>
+        </RootLayout>
     );
 }
