@@ -33,6 +33,6 @@ If additional time were available, I would extend the application’s functional
 
 ## Getting Started
 
-- Clone the repository.
-- Install dependencies: npm install
-- Run the app: npm start
+- Clone the repository: `https://github.com/Deepjyoti-Sarmah/Note-taking-App-assignment`
+- Install dependencies: `npm install`
+- Run the app: `npm run dev`
