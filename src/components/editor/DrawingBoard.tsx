@@ -27,7 +27,7 @@ export const DrawingBoard: React.FC<DrawingBoardProps> = ({ onSave, className })
 
     return (
         <Card className={`flex flex-col bg-white overflow-hidden ${className}`}>
-            <div className={`flex-1 ${isMobile ? 'h-[60vh]' : 'h-[calc(100vh-200px)]'}`}>
+            <div className={`flex-1 ${isMobile ? 'h-[60vh]' : 'h-[calc(100vh-80px)]'}`}>
                 <Tldraw
                     onMount={handleMount}
                     hideUi={isMobile}

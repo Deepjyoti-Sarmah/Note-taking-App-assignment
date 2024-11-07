@@ -6,7 +6,7 @@ export default function Header() {
     const navigate = useNavigate();
 
     return (
-        <header className=" top-0 w-full border-b bg-white">
+        <header className=" top-0 w-full border-b">
             <div className="container flex h-16 items-center justify-between px-4 md:px-6">
                 <div className="flex items-center gap-4">
                     <h1 className="text-xl md:text-2xl font-bold">

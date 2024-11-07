@@ -1,14 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-    Folder,
-    Tag,
-    File,
-    ChevronDown,
-    ChevronRight,
-    PanelLeftClose,
-    PanelLeftOpen,
-} from 'lucide-react';
+import { Folder, Tag, File, ChevronDown, ChevronRight, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useNotes from '@/hooks/useNotes';
@@ -39,14 +31,16 @@ export default function Sidebar() {
                 />
             )}
 
-            <aside className={cn(
-                "fixed md:sticky top-0 bottom-0 left-0 z-40",
-                "w-[240px] bg-zinc-900",
-                "transition-transform duration-300 ease-in-out",
-                isMobile && !isOpen && "-translate-x-full",
-                !isMobile && !isOpen && "w-[50px]",
-                "flex flex-col h-[calc(100vh-64px)]" // Subtract header height
-            )}>
+            <aside
+                className={cn(
+                    'fixed md:sticky top-0 bottom-0 left-0 z-40',
+                    'w-[240px] bg-zinc-900',
+                    'transition-transform duration-300 ease-in-out',
+                    isMobile && !isOpen && '-translate-x-full',
+                    !isMobile && !isOpen && 'w-[50px]',
+                    'flex flex-col h-[calc(100vh-64px)]' // Subtract header height
+                )}
+            >
                 {!isMobile && (
                     <div className="p-2 flex justify-end">
                         <Button
@@ -65,14 +59,14 @@ export default function Sidebar() {
                 )}
 
                 <ScrollArea className="flex-1 px-3">
-                    <div className="space-y-2 py-2">
+                    <div className="space-y-2 p-2">
                         <Button
                             variant="ghost"
                             className="w-full justify-start text-zinc-400 hover:text-white hover:bg-zinc-800"
                             onClick={() => navigate('/')}
                         >
                             <File className="h-4 w-4 mr-2" />
-                            {(isOpen || isMobile) && "All Notes"}
+                            {(isOpen || isMobile) && 'All Notes'}
                         </Button>
 
                         <div className="space-y-1">
@@ -92,7 +86,7 @@ export default function Sidebar() {
 
                             {expanded && (isOpen || isMobile) && (
                                 <div className="ml-4 space-y-1">
-                                    {folders.map(folder => (
+                                    {folders.map((folder) => (
                                         <Button
                                             key={folder.id}
                                             variant="ghost"

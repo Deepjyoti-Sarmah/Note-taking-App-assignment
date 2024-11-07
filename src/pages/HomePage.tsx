@@ -30,7 +30,7 @@ export const HomePage = () => {
     }, [isOpen, toggle]);
 
     return (
-        <div className="h-screen flex flex-col">
+        <div className="h-screen w-screen m-auto flex flex-col">
             <Header />
             <div className="flex-1 flex">
                 <Sidebar />

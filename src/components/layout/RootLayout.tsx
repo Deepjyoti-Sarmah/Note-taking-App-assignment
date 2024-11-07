@@ -11,7 +11,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     const { isOpen } = useSidebarStore()
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen min-w-[100vw] m-auto flex flex-col">
             <Header />
             <div className="flex-1 flex h-[calc(100vh-4rem)]">
                 <Sidebar />

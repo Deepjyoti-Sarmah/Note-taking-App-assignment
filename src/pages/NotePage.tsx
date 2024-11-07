@@ -65,7 +65,7 @@ export default function NotePage() {
                                     variant="ghost"
                                     size="icon"
                                     onClick={toggle}
-                                    className="md:hidden"
+                                    className="md:hidden text-white"
                                 >
                                     <Menu className="h-5 w-5" />
                                 </Button>
@@ -96,59 +96,58 @@ export default function NotePage() {
 
                     <div className={cn(
                         "grid gap-6",
-                        isDrawingOpen ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1"
+                        !isMobile && "lg:grid-cols-2"
                     )}>
                         <div className={cn(
                             "min-h-[calc(100vh-16rem)]",
-                            !isDrawingOpen && !isMobile && "lg:w-[70%]"
+                            isMobile && isPreviewMode ? "hidden" : "block"
                         )}>
-                            {(!isPreviewMode || !isMobile) && (
-                                <QuillEditor
-                                    value={content}
-                                    onChange={setContent}
-                                    className="h-full"
-                                />
-                            )}
-                            {isPreviewMode && (
-                                <div className="prose prose-sm md:prose-base max-w-none bg-white rounded-lg border p-4 min-h-[calc(100vh-16rem)] overflow-auto">
-                                    <h1>{title}</h1>
-                                    <div dangerouslySetInnerHTML={{ __html: content }} />
-                                </div>
-                            )}
+                            <QuillEditor
+                                value={content}
+                                onChange={setContent}
+                                className="h-full"
+                            />
                         </div>
 
-                        <div className="space-y-4">
-                            <Sheet open={isDrawingOpen} onOpenChange={setIsDrawingOpen}>
-                                <SheetTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        className={cn(
-                                            "transition-all duration-300",
-                                            !isDrawingOpen && !isMobile && "w-40"
-                                        )}
-                                    >
-                                        Open Drawing Board
-                                    </Button>
-                                </SheetTrigger>
-                                <SheetContent
-                                    side={isMobile ? "bottom" : "right"}
-                                    className={cn(
-                                        "bg-white",
-                                        isMobile ? "h-[80vh] p-4" : "w-[90%] max-w-[800px]"
-                                    )}
+                        {(!isMobile || isPreviewMode) && (
+                            <div className={cn(
+                                "prose prose-sm md:prose-base max-w-none bg-white rounded-lg border p-4 min-h-[calc(100vh-16rem)] overflow-auto",
+                                isMobile && !isPreviewMode ? "hidden" : "block"
+                            )}>
+                                <h1>{title}</h1>
+                                <div dangerouslySetInnerHTML={{ __html: content }} />
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mt-6">
+                        <Sheet open={isDrawingOpen} onOpenChange={setIsDrawingOpen}>
+                            <SheetTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className="w-full md:w-auto"
                                 >
-                                    <SheetHeader>
-                                        <SheetTitle>Drawing Board</SheetTitle>
-                                    </SheetHeader>
-                                    <div className="mt-4 h-[calc(100%-60px)]">
-                                        <DrawingBoard
-                                            onSave={setDrawings}
-                                            className="h-full"
-                                        />
-                                    </div>
-                                </SheetContent>
-                            </Sheet>
-                        </div>
+                                    {isDrawingOpen ? 'Close Drawing Board' : 'Open Drawing Board'}
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent
+                                side={isMobile ? "bottom" : "right"}
+                                className={cn(
+                                    "bg-white p-0 text-white",
+                                    isMobile ? "h-[80vh]" : "w-[90%] max-w-[1000px]"
+                                )}
+                            >
+                                <SheetHeader className="p-4">
+                                    <SheetTitle>Drawing Board</SheetTitle>
+                                </SheetHeader>
+                                <div className="h-[calc(100%-60px)] ">
+                                    <DrawingBoard
+                                        onSave={setDrawings}
+                                        className="h-full"
+                                    />
+                                </div>
+                            </SheetContent>
+                        </Sheet>
                     </div>
                 </div>
             </div>
